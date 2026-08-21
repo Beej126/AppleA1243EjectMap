@@ -2,25 +2,7 @@
   "default_group": "uncategorized",
   "groups": [],
   "assignments": {
-    "build.cmd": "uncategorized",
-    "go.mod": "uncategorized",
-    "go.sum": "uncategorized",
-    "main.go": "uncategorized",
-    "readme.md": "uncategorized",
-    ".gitignore": "uncategorized",
-    "assets/eject.svg": "uncategorized",
-    "assets/fa--windows.png": "uncategorized",
-    "assets/fa--windows.svg": "uncategorized",
-    "assets/iconify - home of open source icons.url": "uncategorized",
-    "assets/lucide - eject icon.url": "uncategorized",
-    "assets/magick svg to ico.cmd": "uncategorized",
-    "assets/magick svg to png.cmd": "uncategorized",
-    "winres.json": "uncategorized",
-    "assets/eject.png": "uncategorized",
-    "assets/eject.ico": "uncategorized",
-    "applea1243ejectmap.exe - shortcut.lnk": "uncategorized",
-    ".github/workflows/build.yml": "uncategorized",
-    "assets/local-github-action-testing.md": "uncategorized"
+    "readme.md": "uncategorized"
   },
   "auto_sync": true
 }

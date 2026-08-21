@@ -1,4 +1,4 @@
-# Apple A1243 Eject Key Remapper ⏏️
+# Apple A1243 Keyboard Eject Key Remapper ⏏️
 
 A lightweight, zero-dependency Windows utility written in Go that hooks raw HID input packets from the Apple A1243 USB Extended Keyboard to remap the hardware **Eject** key to any key combination, system action, executable, or Virtual Key (VK) code (such as `F24`).
 
@@ -15,6 +15,10 @@ Because the Apple A1243 Eject key operates on an explicit HID Consumer Control /
 * **High-DPI System Tray Menu:** Features an embedded taskbar icon with High-DPI auto-scaling (Windhawk taskbar tweak compatible) and a right-click **Quit** menu.
 * **Built-in Startup Installer:** Easily installs a shortcut to the Windows Startup folder configured with your target arguments.
 * **Silent Execution:** Runs headless in the background without keeping a persistent console window open.
+
+### TBD
+
+* Take over handling Fn + F7-F12 as media events... and F1-F4 for that matter... starts to feel like there should be a config file now (instead of command line args), where we make Fn+Fx mappings to the special Windows functions already implemented: play/pause, skip, reverse, lock-screen, task-view, etc.
 
 ---
 
@@ -83,6 +87,7 @@ Remapping non-standard or cross-platform keyboards on Windows often requires ope
 
 | Tool / Method | Layer | Pros | Cons |
 | --- | --- | --- | --- |
+| [Hidfalum driver](https://web.archive.org/web/20260414025507/https://maxtdp.com/software/hidfalum/) 👍💯 | low level filter driver | solves the main painpoints (except for eject key) - swapping Win & Alt to the Windows key locations, flipping Fn to be Insert, Clear to be NumLock, F13-F15 = Prt Screen, etc. | none - it's pretty perfect 
 | **[AppleA1243EjectMap](https://github.com/Beej126/AppleA1243EjectMap)** 🚀 *(This Tool)* | Software Injection (`SendInput` & Raw Input API) | Captures non-standard HID Consumer packets (like Apple Eject) that Windows ignores; requires zero dependencies; natively handles shortcuts, program launches, OS locking, display power off, and graphics resets headlessly. | Works specifically as an event listener/injector rather than a full system-wide driver. |
 | **[SharpKeys](https://github.com/randyrants/sharpkeys)** 👍 | Hardware Registry (`Scancode Map`) | Writes directly to `HKLM\SYSTEM\CurrentControlSet\Control\Keyboard Layout`; zero background resource usage; completely native OS remapping. | Cannot map hardware keys that do not produce standard Windows scancodes (such as the A1243 Eject key). |
 | **[PowerToys Keyboard Manager](https://learn.microsoft.com/en-us/windows/powertoys/keyboard-manager)** 👉👈 | User-Land Windows Hook | Native Microsoft GUI; supports application-specific remapping and key combinations on the fly. | Requires the heavy PowerToys background process to remain active; cannot intercept raw HID Vendor/Consumer pages. |
@@ -96,3 +101,4 @@ Remapping non-standard or cross-platform keyboards on Windows often requires ope
 Compile the Go application using the `windowsgui` linker flag to ensure no console window flashes on normal startup:
 
 `build.cmd`
+
