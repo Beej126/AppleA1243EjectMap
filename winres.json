@@ -1,0 +1,31 @@
+{
+  "RT_GROUP_ICON": {
+    "APP": {
+      "0000": [
+        "assets/eject.png"
+      ]
+    }
+  },
+  "RT_VERSION": {
+    "#1": {
+      "0000": {
+        "_note": "'fixed' version info is numeric which is more direct to parse for automated tools",
+        "fixed": {
+          "file_version": "4.0.0.0",
+          "product_version": "4.0.0.0"
+        },
+        "_note2" : "'info' is language specific strings that show in file explorer > properties",
+        "info": {
+          "0409": {
+            "_note" : "this is the minimal set of fields i've seen shown in file explorer that i care about",
+            "FileDescription": "Apple A1243 Eject Key Remapper",
+            "FileVersion": "4.0.0.0",
+            "ProductName": "AppleA1243EjectMap",
+            "ProductVersion": "4.0.0.0",
+            "LegalCopyright": "https://github.com/Beej126/AppleA1243EjectMap"
+          }
+        }
+      }
+    }
+  }
+}

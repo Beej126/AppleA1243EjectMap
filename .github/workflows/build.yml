@@ -1,0 +1,33 @@
+name: Release Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate Version
+        id: version
+        uses: beej126/.github/actions/calculate-version@main
+
+      - name: Build Go Executable
+        id: build
+        uses: beej126/.github/actions/build-go-winres@main
+        with:
+          binary_name: AppleA1243EjectMap
+          win_file_version: ${{ steps.version.outputs.win_file_version }}
+
+      - name: Publish Release
+        uses: beej126/.github/actions/generate-release@main
+        with:
+          tag_name: ${{ steps.version.outputs.new_tag }}
+          files: ${{ steps.build.outputs.binary_path }}
