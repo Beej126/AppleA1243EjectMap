@@ -2,7 +2,7 @@
   "default_group": "uncategorized",
   "groups": [],
   "assignments": {
-    ".github/workflows/build.yml": "uncategorized"
+    "main.go": "uncategorized"
   },
   "auto_sync": true
 }

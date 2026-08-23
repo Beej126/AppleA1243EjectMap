@@ -56,6 +56,7 @@ var (
 
 	kernel32                     = syscall.NewLazyDLL("kernel32.dll")
 	procAllocConsole             = kernel32.NewProc("AllocConsole")
+	procFreeConsole              = kernel32.NewProc("FreeConsole")
 	procSetConsoleTitle          = kernel32.NewProc("SetConsoleTitleW")
 	procCreateToolhelp32Snapshot = kernel32.NewProc("CreateToolhelp32Snapshot")
 	procProcess32First           = kernel32.NewProc("Process32FirstW")
@@ -438,6 +439,7 @@ func showContextMenu(hwnd uintptr) {
 }
 
 func spawnDedicatedConsole() {
+	procFreeConsole.Call()
 	res, _, _ := procAllocConsole.Call()
 	if res == 0 {
 		return
@@ -648,9 +650,11 @@ func main() {
 	}
 
 	if !hasAction {
-		if globalDebug {
-			printUsage()
+		if !globalDebug {
+			spawnDedicatedConsole()
+			globalDebug = true
 		}
+		printUsage()
 		pauseAndExit(1)
 	}
 
