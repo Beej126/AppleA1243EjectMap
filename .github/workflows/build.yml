@@ -25,6 +25,7 @@ jobs:
         with:
           binary_name: AppleA1243EjectMap
           win_file_version: ${{ steps.version.outputs.win_file_version }}
+          ldflags: "-H windowsgui"
 
       - name: Publish Release
         uses: beej126/.github/actions/generate-release@main
