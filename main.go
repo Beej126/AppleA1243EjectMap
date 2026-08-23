@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"unicode/utf16"
 	"unsafe"
 )
 
@@ -25,11 +26,6 @@ func init() {
 var embeddedIcon embed.FS
 
 var (
-	Version = "4.0.0"
-	Author  = "Beej126"
-)
-
-var (
 	user32                          = syscall.NewLazyDLL("user32.dll")
 	procRegisterDevices             = user32.NewProc("RegisterRawInputDevices")
 	procGetRawInputData             = user32.NewProc("GetRawInputData")
@@ -37,7 +33,7 @@ var (
 	procTranslateMessage            = user32.NewProc("TranslateMessage")
 	procDispatchMessage             = user32.NewProc("DispatchMessageW")
 	procCreateWindowEx              = user32.NewProc("CreateWindowExW")
-	procRegisterClassEx            = user32.NewProc("RegisterClassExW")
+	procRegisterClassEx             = user32.NewProc("RegisterClassExW")
 	procDefWindowProc               = user32.NewProc("DefWindowProcW")
 	procSendInput                   = user32.NewProc("SendInput")
 	procSendMessage                 = user32.NewProc("SendMessageW")
@@ -69,6 +65,11 @@ var (
 	procCloseHandle              = kernel32.NewProc("CloseHandle")
 	procGetCurrentProcessId      = kernel32.NewProc("GetCurrentProcessId")
 	procGetModuleHandle          = kernel32.NewProc("GetModuleHandleW")
+
+	versionDLL                 = syscall.NewLazyDLL("version.dll")
+	procGetFileVersionInfoSize = versionDLL.NewProc("GetFileVersionInfoSizeW")
+	procGetFileVersionInfo     = versionDLL.NewProc("GetFileVersionInfoW")
+	procVerQueryValue          = versionDLL.NewProc("VerQueryValueW")
 )
 
 type ActionType int
@@ -461,8 +462,10 @@ func spawnDedicatedConsole() {
 }
 
 func printUsage() {
+	version, copyright := runningExeVersionInfo()
 	fmt.Println("==================================================")
-	fmt.Printf("   Apple A1243 Eject Key Remapper v%s by %s\n", Version, Author)
+	fmt.Printf("   Apple A1243 Eject Key Remapper v%s\n", version)
+	fmt.Printf("   %s\n", copyright)
 	fmt.Println("==================================================")
 	fmt.Println("[ERROR] Invalid shortcut sequence or command.")
 	fmt.Println()
@@ -473,12 +476,62 @@ func printUsage() {
 	fmt.Println("  lock          - Lock Workstation")
 	fmt.Println("  sleep         - Put PC to sleep")
 	fmt.Println("  hibernate     - Put PC into hibernation")
-	fmt.Println("  monitors-off  - Turn off displays instantly")
+	fmt.Println("  monitor-off   - Turn off displays instantly")
 	fmt.Println("  reset-gfx     - Reset graphics driver (Win+Ctrl+Shift+B)")
 	fmt.Println("  taskmgr       - Launch Task Manager")
 	fmt.Println("  clipboard     - Toggle Clipboard History (Win+V)")
 	fmt.Println("  gamebar       - Toggle Game Bar (Win+G)")
 	fmt.Println("--------------------------------------------------")
+}
+
+func runningExeVersionInfo() (string, string) {
+	exePath, err := os.Executable()
+	if err != nil {
+		return "error", ""
+	}
+	fileName, err := syscall.UTF16FromString(exePath)
+	if err != nil {
+		return "error", ""
+	}
+
+	size, _, _ := procGetFileVersionInfoSize.Call(uintptr(unsafe.Pointer(&fileName[0])), 0)
+	if size == 0 || size > uintptr(^uint32(0)) {
+		return "error", ""
+	}
+	data := make([]byte, size)
+	if result, _, _ := procGetFileVersionInfo.Call(
+		uintptr(unsafe.Pointer(&fileName[0])),
+		0,
+		size,
+		uintptr(unsafe.Pointer(&data[0])),
+	); result == 0 {
+		return "error", ""
+	}
+
+	version := queryVersionString(data, `\StringFileInfo\040904b0\FileVersion`)
+	copyright := queryVersionString(data, `\StringFileInfo\040904b0\LegalCopyright`)
+	return version, copyright
+}
+
+func queryVersionString(data []byte, subBlock string) string {
+	path, err := syscall.UTF16FromString(subBlock)
+	if err != nil {
+		return ""
+	}
+
+	var value uintptr
+	var length uint32
+	result, _, _ := procVerQueryValue.Call(
+		uintptr(unsafe.Pointer(&data[0])),
+		uintptr(unsafe.Pointer(&path[0])),
+		uintptr(unsafe.Pointer(&value)),
+		uintptr(unsafe.Pointer(&length)),
+	)
+	if result == 0 || value == 0 || length == 0 {
+		return ""
+	}
+
+	return string(utf16.Decode(unsafe.Slice((*uint16)(unsafe.Pointer(value)), length-1)))
 }
 
 func pauseAndExit(code int) {
@@ -604,9 +657,7 @@ func main() {
 	}
 
 	if globalDebug {
-		fmt.Println("==================================================")
-		fmt.Printf("   Apple A1243 Eject Remapper v%s by %s\n", Version, Author)
-		fmt.Println("==================================================")
+		printUsage()
 		fmt.Printf("Target Action: %s\n", targetActionStr)
 		fmt.Println("Registering Kernel Raw Input Hook...")
 	}

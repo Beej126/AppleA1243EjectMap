@@ -2,7 +2,11 @@
   "default_group": "uncategorized",
   "groups": [],
   "assignments": {
-    "readme.md": "uncategorized"
+    "main.go": "uncategorized",
+    "applea1243ejectmap.exe - shortcut.lnk": "uncategorized",
+    "applea1243ejectmap - lock screen.lnk": "uncategorized",
+    "applea1243ejectmap - sleep.lnk": "uncategorized",
+    "winres.json": "uncategorized"
   },
   "auto_sync": true
 }
