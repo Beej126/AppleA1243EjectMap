@@ -2,11 +2,8 @@
   "default_group": "uncategorized",
   "groups": [],
   "assignments": {
-    "main.go": "uncategorized",
-    "applea1243ejectmap.exe - shortcut.lnk": "uncategorized",
-    "applea1243ejectmap - lock screen.lnk": "uncategorized",
-    "applea1243ejectmap - sleep.lnk": "uncategorized",
-    "winres.json": "uncategorized"
+    "build.cmd": "uncategorized",
+    "main.go": "uncategorized"
   },
   "auto_sync": true
 }

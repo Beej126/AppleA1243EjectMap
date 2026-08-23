@@ -10,4 +10,4 @@ rm *.exe
 go generate ./...
 
 go build -ldflags="-s -w -H windowsgui" -o AppleA1243EjectMap.exe .
-AppleA1243EjectMap.exe lock -debug
+AppleA1243EjectMap.exe lock

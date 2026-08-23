@@ -572,7 +572,6 @@ func main() {
 	runtime.LockOSThread()
 
 	initVkMap()
-	killPreviousInstances()
 
 	// Parse flags for -debug before any standard output or command handling
 	for _, arg := range os.Args[1:] {
@@ -583,6 +582,7 @@ func main() {
 			break
 		}
 	}
+	killPreviousInstances()
 
 	hasAction := false
 
@@ -648,11 +648,9 @@ func main() {
 	}
 
 	if !hasAction {
-		if !globalDebug {
-			spawnDedicatedConsole()
-			globalDebug = true
+		if globalDebug {
+			printUsage()
 		}
-		printUsage()
 		pauseAndExit(1)
 	}
 
