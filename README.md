@@ -1,6 +1,6 @@
 # Apple A1243 Keyboard Eject Key Remapper ⏏️
 
-A lightweight, zero-dependency Windows utility written in Go that hooks raw HID input packets from the Apple A1243 USB Extended Keyboard to remap the hardware **Eject** key to any key combination, system action, executable, or Virtual Key (VK) code (such as `F24`).
+A lightweight, zero-dependency Windows utility written in Go that hooks raw HID input packets from the Apple A1243 USB Extended Keyboard to remap the hardware **Eject** key to any key combination, system action, executable, or Virtual Key (VK) code.
 
 Because the Apple A1243 Eject key operates on an explicit HID Consumer Control / Vendor report page rather than standard keyboard scancodes, standard remapping tools like SharpKeys cannot detect or remap it on its own. This tool bridges that gap by running silently in the background, listening for the raw HID packet, and natively triggering the target shortcut or action in Windows.
 
@@ -8,17 +8,13 @@ Because the Apple A1243 Eject key operates on an explicit HID Consumer Control /
 
 ## Features
 
-* **Direct Raw HID Parsing:** Listens specifically for Apple Consumer/Vendor HID events (`RIM_TYPEHID`), isolating Eject signals while explicitly ignoring standard keyboard inputs (preventing false triggers from keys like **Delete**).
-* **Friendly Shortcut Parsing:** Natively supports multi-modifier key combinations (e.g., `Win+Shift+S`, `Ctrl+Shift+Esc`, `Alt+F4`) with built-in loop prevention.
-* **Built-in System Actions:** Direct support for Windows system operations (`lock`, `sleep`, `hibernate`, `monitors-off`, `reset-gfx`, `taskmgr`, `clipboard`, `gamebar`, `mute`, `volup`, `voldown`).
-* **Self-Terminating Instance Manager:** Automatically kills running background instances upon re-launching to prevent duplicate hooks.
-* **High-DPI System Tray Menu:** Features an embedded taskbar icon with High-DPI auto-scaling (Windhawk taskbar tweak compatible) and a right-click **Quit** menu.
-* **Built-in Startup Installer:** Easily installs a shortcut to the Windows Startup folder configured with your target arguments.
-* **Silent Execution:** Runs headless in the background without keeping a persistent console window open.
+* **Task Tray Icon** with High-DPI support (Windhawk taskbar tweak compatible =) 
+* **Friendly Shortcut Parsing:** supports multi-modifier key combinations (e.g., `Win+Shift+S`, `Ctrl+Shift+Esc`, `Alt+F4`) and System Actions `lock`, `sleep`, `hibernate`, `monitors-off`, `reset-gfx`, `taskmgr`, `clipboard`, `gamebar`, `mute`, `volup`, `voldown`
+* **Startup Installer:** Easily installs a shortcut to the Windows Startup folder configured with your target arguments.
 
 ### TBD
 
-* Take over handling Fn + F7-F12 as media events... and F1-F4 for that matter... starts to feel like there should be a config file now (instead of command line args), where we make Fn+Fx mappings to the special Windows functions already implemented: play/pause, skip, reverse, lock-screen, task-view, etc.
+* Take over handling **<kbd>Fn</kbd>** + F7-F12 as media events... and F1-F4 for that matter... starts to feel like there should be a config file now (instead of command line args), where we make Fn+Fx mappings to the special Windows functions already implemented: play/pause, skip, reverse, lock-screen, task-view, etc.
 
 ---
 
@@ -88,17 +84,20 @@ Remapping non-standard or cross-platform keyboards on Windows often requires ope
 | Tool / Method | Layer | Pros | Cons |
 | --- | --- | --- | --- |
 | [Hidfalum driver](https://web.archive.org/web/20260414025507/https://maxtdp.com/software/hidfalum/) 👍💯 | low level filter driver | solves the main painpoints (except for eject key) - swapping Win & Alt to the Windows key locations, flipping Fn to be Insert, Clear to be NumLock, F13-F15 = Prt Screen, etc. | none - it's pretty perfect 
-| **[AppleA1243EjectMap](https://github.com/Beej126/AppleA1243EjectMap)** 🚀 *(This Tool)* | Software Injection (`SendInput` & Raw Input API) | Captures non-standard HID Consumer packets (like Apple Eject) that Windows ignores; requires zero dependencies; natively handles shortcuts, program launches, OS locking, display power off, and graphics resets headlessly. | Works specifically as an event listener/injector rather than a full system-wide driver. |
-| **[SharpKeys](https://github.com/randyrants/sharpkeys)** 👍 | Hardware Registry (`Scancode Map`) | Writes directly to `HKLM\SYSTEM\CurrentControlSet\Control\Keyboard Layout`; zero background resource usage; completely native OS remapping. | Cannot map hardware keys that do not produce standard Windows scancodes (such as the A1243 Eject key). |
-| **[PowerToys Keyboard Manager](https://learn.microsoft.com/en-us/windows/powertoys/keyboard-manager)** 👉👈 | User-Land Windows Hook | Native Microsoft GUI; supports application-specific remapping and key combinations on the fly. | Requires the heavy PowerToys background process to remain active; cannot intercept raw HID Vendor/Consumer pages. |
-| **[3RVX](https://3rvx.com/)** 👍👍 | User-Land OSD & Hotkey Hook | Provides clean macOS-style translucent HUDs for volume and brightness; native support for custom hotkey actions and drive eject notifications. | Focused primarily on volume/OSD feedback rather than low-level scancode remapping for utility keys. |
-| **AutoHotkey (AHK)** 👎 | User-Land Hooking | Extremely flexible scripting engine; capable of handling complex hotkey logic, conditional shortcuts, and window management. | High barrier to entry for simple key swaps; requires running script interpreters in the background; struggles with raw HID consumer reports without complex third-party libraries. |
+| [SharpKeys](https://github.com/randyrants/sharpkeys) 👍 | Hardware Registry (`Scancode Map`) | Writes directly to `HKLM\SYSTEM\CurrentControlSet\Control\Keyboard Layout`; zero background resource usage; completely native OS remapping. | Cannot map hardware keys that do not produce standard Windows scancodes (such as the A1243 Eject key). |
+| [PowerToys Keyboard Manager](https://learn.microsoft.com/en-us/windows/powertoys/keyboard-manager) 👉👈 | User-Land Windows Hook | Native Microsoft GUI; supports application-specific remapping and key combinations on the fly. | Requires the heavy PowerToys background process to remain active; cannot intercept raw HID Vendor/Consumer pages. |
+| [3RVX](https://3rvx.com/) 👍👍 | User-Land OSD & Hotkey Hook | Provides clean macOS-style translucent HUDs for volume and brightness; native support for custom hotkey actions and drive eject notifications. | Focused primarily on volume/OSD feedback rather than low-level scancode remapping for utility keys. |
+| AutoHotkey (AHK) 👎 | User-Land Hooking | Extremely flexible scripting engine; capable of handling complex hotkey logic, conditional shortcuts, and window management. | High barrier to entry for simple key swaps; requires running script interpreters in the background; struggles with raw HID consumer reports without complex third-party libraries. |
+
+🎉 Have some fun, get a cheap thermal label maker to create custom keycaps, e.g. [Nelko P21](https://www.amazon.com/Nelko-P21-Bluetooth-Templates-Organizing/dp/B0CHJR142G?th=1)
+
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/69f2ec44-c3c4-4b54-bf04-fca83acc5513" />
 
 ---
 
 ## Build Instructions
 
-Compile the Go application using the `windowsgui` linker flag to ensure no console window flashes on normal startup:
+one time compiler install: `winget install --scope machine --id GoLang.Go`
 
 `build.cmd`
 
